@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetinaGuard - AI-Powered Diabetic Retinopathy Screening</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            color: #333;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        /* App Window Container */
+        .app-window {
+            width: 100%;
+            max-width: 1200px;
+            min-height: 90vh;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Window Controls */
+        .window-controls {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #e6edf7, #f2f5fa);
+        }
+        
+        .window-control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+        
+        .window-control.close {
+            background-color: #ff5f57;
+        }
+        
+        .window-control.minimize {
+            background-color: #ffbd2e;
+        }
+        
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(135deg, #e6edf7, #f2f5fa);
+        }
+        
+        .nav-logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: #4169E1;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #4169E1;
+        }
+        
+        /* Landing Page */
+        #landing-page {
+            background: linear-gradient(135deg, #e6edf7, #f2f5fa);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #e6edf7 0%, #d7e1f3 50%, #e4d8f2 100%);
+        }
+        
+        .hero-content {
+            max-width: 700px;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 54px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            letter-spacing: -0.5px;
+        }
+        
+        .tagline {
+            font-size: 24px;
+            color: white;
+            margin-bottom: 40px;
+            line-height: 1.5;
+            font-weight: 400;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 50px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background-color: #4169E1;
+            color: #fff;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            opacity: 0.95;
+        }
+        
+        /* Features */
+        .features {
+            padding: 40px 0;
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px 15px;
+            text-align: center;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+        
+        .feature-icon svg {
+            stroke: #4169E1;
+        }
+        
+        .feature-title {
+            color: #333;
+            font-weight: 500;
+            font-size: 16px;
+        }
+        
+        /* Footer */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: white;
+            border-top: 1px solid #eee;
+        }
+        
+        .footer-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-right: 20px;
+        }
+        
+        .footer-links a {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #4169E1;
+        }
+        
+        .social-links {
+            display: flex;
+        }
+        
+        .social-link {
+            margin-left: 15px;
+            color: #666;
+            transition: 0.3s;
+        }
+        
+        .social-link:hover {
+            color: #4169E1;
+        }
+        
+        /* Analyzer Tool */
+        .analyzer {
+            display: none;
+            background-color: #fff;
+            padding: 40px 0;
+            flex-grow: 1;
+        }
+        
+        .analyzer-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .analyzer-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            color: #4169E1;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .back-button:hover {
+            opacity: 0.8;
+        }
+        
+        .analyzer-title {
+            color: #4169E1;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        
+        .analyzer-description {
+            color: #666;
+            font-size: 16px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .upload-area {
+            background-color: #f8f9fa;
+            border: 2px dashed #4169E1;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .upload-area:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .upload-icon {
+            font-size: 40px;
+            color: #4169E1;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            color: #4169E1;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        /* Analysis Progress */
+        .analysis-progress {
+            display: none;
+            margin-top: 40px;
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .progress-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #4169E1;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            height: 20px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4169E1, #9370DB);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-status {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #eee;
+            z-index: 0;
+        }
+        
+        .step {
+            position: relative;
+            z-index: 1;
+            background-color: white;
+            padding: 0 10px;
+        }
+        
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            border: 2px solid #ddd;
+            color: #999;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .step.active .step-circle {
+            background-color: #4169E1;
+            border-color: #4169E1;
+            color: white;
+        }
+        
+        .step.completed .step-circle {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .step.active .step-label {
+            color: #4169E1;
+            font-weight: 500;
+        }
+        
+        .step.completed .step-label {
+            color: #4CAF50;
+            font-weight: 500;
+        }
+        
+        /* Analysis Results */
+        .analysis-results {
+            display: none;
+            margin-top: 40px;
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .image-section {
+            padding: 24px;
+        }
+        
+        .image-container {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            max-height: 360px;
+            border-radius: 8px;
+        }
+        
+        .analysis-details {
+            padding: 30px;
+            border-left: 1px solid #f0f0f0;
+        }
+        
+        .grade-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4169E1;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 30px;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .dr-description {
+            color: #555;
+            font-size: 15px;
+            margin-bottom: 32px;
+        }
+        
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+        
+        .toggle-label {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #4169E1;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* NEW: Severity and Confidence Indicator */
+        .severity-indicator {
+            margin-bottom: 24px;
+        }
+        
+        .severity-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .severity-value {
+            color: #4169E1;
+            font-weight: 600;
+        }
+        
+        .severity-bar {
+            height: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .severity-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #4CAF50, #FFEB3B, #FF9800, #F44336);
+            transition: width 1s ease-out;
+        }
+        
+        /* NEW: Confidence Score */
+        .confidence-score {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .confidence-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background: conic-gradient(#4169E1 0%, #4169E1 0%, #f0f0f0 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .confidence-circle::before {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+        }
+        
+        .confidence-value {
+            position: relative;
+            font-size: 24px;
+            font-weight: 700;
+            color: #4169E1;
+            z-index: 1;
+        }
+        
+        .confidence-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .recommendation-section {
+            margin-top: 24px;
+        }
+        
+        .recommendation-label {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        
+        .recommendation-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+            border-radius: 30px;
+            color: #333;
+            font-size: 14px;
+            border: 1px solid #eee;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: #4169E1;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background-color: #ffebee;
+            color: #d32f2f;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .cta-buttons {
+            text-align: center;
+            margin-top: 30px;
+            padding-bottom: 20px;
+        }
+        
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .analysis-details {
+                border-left: none;
+                border-top: 1px solid #f0f0f0;
+            }
+            
+            nav, footer {
+                padding: 15px 20px;
+            }
+            
+            .nav-links li {
+                margin-left: 15px;
+            }
+            
+            .progress-steps {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .progress-steps::before {
+                display: none;
+            }
+            
+            .step {
+                display: flex;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+            
+            .step-circle {
+                margin: 0 12px 0 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .logo {
+                font-size: 42px;
+            }
+            
+            .tagline {
+                font-size: 20px;
+            }
+            
+            .btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+            
+            .nav-logo {
+                font-size: 18px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .footer-links li {
+                margin-right: 12px;
+            }
+            
+            .footer-links a {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-window">
+        <!-- Window Controls -->
+        <div class="window-controls">
+            <div class="window-control minimize"></div>
+            <div class="window-control close"></div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-logo">RetinaGuard</div>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">Blog</a></li>
+            </ul>
+        </nav>
+        
+        <!-- Landing Page Content -->
+        <div id="landing-page">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1 class="logo">RetinaGuard</h1>
+                    <p class="tagline">AI-Powered Diabetic Retinopathy Detection</p>
+                    <button id="try-analyzer-btn" class="btn btn-primary">Try Demo</button>
+                </div>
+            </section>
+            
+            <section class="features">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                        <p class="feature-title">Upload Image</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                <line x1="6" y1="1" x2="6" y2="4"></line>
+                                <line x1="10" y1="1" x2="10" y2="4"></line>
+                                <line x1="14" y1="1" x2="14" y2="4"></line>
+                            </svg>
+                        </div>
+                        <p class="feature-title">Get Grade</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <circle cx="10" cy="13" r="2"></circle>
+                                <path d="M20 2v6h-6"></path>
+                            </svg>
+                        </div>
+                        <p class="feature-title">View Heatmap</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                                <path d="M9 16l2 2 4-4"></path>
+                            </svg>
+                        </div>
+                        <p class="feature-title">Schedule Follow-Up</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Analyzer Tool Content -->
+        <div id="analyzer-tool" class="analyzer">
+            <div class="analyzer-container">
+                <div class="analyzer-header">
+                    <div class="back-button" id="back-to-landing">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4169E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        <span style="margin-left: 8px;">Back to Home</span>
+                    </div>
+                    <h2 class="analyzer-title">RetinaGuard DR Analyzer</h2>
+                    <p class="analyzer-description">Upload a retinal fundus image to analyze for signs of Diabetic Retinopathy. Our AI will classify the DR severity grade and provide visual explanations.</p>
+                </div>
+                
+                <div id="upload-area" class="upload-area">
+                    <div class="upload-icon">
+                        <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#4169E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <p class="upload-text">Upload Retinal Image</p>
+                    <p class="upload-hint">Click or drag & drop a retinal fundus image (JPG, PNG)</p>
+                    <input type="file" id="file-input" accept="image/*">
+                </div>
+                
+                <div id="loader" class="loader">
+                    <div class="spinner"></div>
+                    <p>Analyzing image... Please wait</p>
+                </div>
+                
+                <!-- NEW: Analysis Progress UI -->
+                <div id="analysis-progress" class="analysis-progress">
+                    <h3 class="progress-title">Analyzing Retinal Image</h3>
+                    
+                    <div class="progress-container">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+                    <p id="progress-status" class="progress-status">Initializing analysis...</p>
+                    
+                    <div class="progress-steps">
+                        <div class="step" id="step-1">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">Pre-processing</div>
+                        </div>
+                        <div class="step" id="step-2">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">Feature extraction</div>
+                        </div>
+                        <div class="step" id="step-3">
+                            <div class="step-circle">3</div>
+                            <div class="step-label">Classification</div>
+                        </div>
+                        <div class="step" id="step-4">
+                            <div class="step-circle">4</div>
+                            <div class="step-label">Report generation</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="error-message" class="error-message">
+                    Error processing image. Please try again with a different image.
+                </div>
+                
+                <!-- Analysis Results UI -->
+                <div id="analysis-results" class="analysis-results">
+                    <div class="result-grid">
+                        <div class="image-section">
+                            <div class="image-container">
+                                <img id="result-image" src="/api/placeholder/400/320" alt="Retinal scan">
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-details">
+                            <div class="grade-badge" id="grade-badge">Grade 2 - Moderate</div>
+                            <p class="dr-description" id="dr-description">Moderate nonproliferative diabetic retinopathy</p>
+                            
+                            <!-- NEW: Severity Indicator -->
+                            <div class="severity-indicator">
+                                <div class="severity-label">
+                                    <span>Severity Index</span>
+                                    <span class="severity-value" id="severity-percentage">68%</span>
+                                </div>
+                                <div class="severity-bar">
+                                    <div class="severity-fill" id="severity-fill" style="width: 68%"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- NEW: Confidence Score -->
+                            <div class="confidence-score">
+                                <div class="confidence-circle" id="confidence-circle" style="background: conic-gradient(#4169E1 0%, #4169E1 85%, #f0f0f0 85%);">
+                                    <div class="confidence-value" id="confidence-value">85%</div>
+                                </div>
+                                <div class="confidence-label">AI Confidence Score</div>
+                            </div>
+                            
+                            <div class="toggle-row">
+                                <span class="toggle-label">Grad-CAM heatmap</span>
+                                <label class="switch">
+                                    <input id="heatmap-toggle" type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="recommendation-section">
+                                <p class="recommendation-label">Recommendation</p>
+                                <div class="recommendation-badge" id="recommendation-text">Re-screen in 6 months</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cta-buttons">
+                        <button id="analyze-another" class="btn btn-primary">Analyze Another Image</button>
+                        <button id="back-to-home" class="btn btn-secondary">Back to Home</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer>
+            <ul class="footer-links">
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">GitHub</a></li>
+            </ul>
+            <div class="social-links">
+                <a href="#" class="social-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                    </svg>
+                </a>
+                <a href="#" class="social-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                    </svg>
+                </a>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // Navigation between landing page and analyzer tool
+        document.getElementById('try-analyzer-btn').addEventListener('click', function() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('analyzer-tool').style.display = 'block';
+        });
+        
+        document.getElementById('back-to-home').addEventListener('click', function() {
+            document.getElementById('analyzer-tool').style.display = 'none';
+            document.getElementById('landing-page').style.display = 'block';
+        });
+        
+        document.getElementById('back-to-landing').addEventListener('click', function() {
+            document.getElementById('analyzer-tool').style.display = 'none';
+            document.getElementById('landing-page').style.display = 'block';
+        });
+        
+        // File upload handling
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '#f0f0f0';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '#f8f9fa';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '#f8f9fa';
+            
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                handleFile(fileInput.files[0]);
+            }
+        });
+        
+        // Track original and heatmap images
+        let originalImageSrc = '';
+        let heatmapImageSrc = '/api/placeholder/400/320';
+        
+        function handleFile(file) {
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                showError('Please upload an image file (JPG, PNG)');
+                return;
+            }
+            
+            // Show loader and hide other elements
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('upload-area').style.display = 'none';
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('analysis-results').style.display = 'none';
+            document.getElementById('analysis-progress').style.display = 'none';
+            
+            // Display the uploaded image
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                originalImageSrc = e.target.result;
+                document.getElementById('result-image').src = originalImageSrc;
+                
+                // Start analysis process with progress visualization
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('analysis-progress').style.display = 'block';
+                    startAnalysisProcess();
+                }, 1000);
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Analysis process simulation
+        function startAnalysisProcess() {
+            // Initial progress settings
+            const progressBar = document.getElementById('progress-bar');
+            const progressStatus = document.getElementById('progress-status');
+            let progress = 0;
+            
+            // Set first step as active
+            document.getElementById('step-1').classList.add('active');
+            progressStatus.textContent = 'Pre-processing image...';
+            
+            // Simulate pre-processing (step 1)
+            const interval = setInterval(() => {
+                progress += 2;
+                progressBar.style.width = `${progress}%`;
+                
+                // Update steps based on progress
+                if (progress >= 25 && progress < 50) {
+                    document.getElementById('step-1').classList.remove('active');
+                    document.getElementById('step-1').classList.add('completed');
+                    document.getElementById('step-2').classList.add('active');
+                    progressStatus.textContent = 'Extracting retinal features...';
+                } else if (progress >= 50 && progress < 75) {
+                    document.getElementById('step-2').classList.remove('active');
+                    document.getElementById('step-2').classList.add('completed');
+                    document.getElementById('step-3').classList.add('active');
+                    progressStatus.textContent = 'Classifying DR severity...';
+                } else if (progress >= 75 && progress < 100) {
+                    document.getElementById('step-3').classList.remove('active');
+                    document.getElementById('step-3').classList.add('completed');
+                    document.getElementById('step-4').classList.add('active');
+                    progressStatus.textContent = 'Generating final report...';
+                } else if (progress >= 100) {
+                    clearInterval(interval);
+                    document.getElementById('step-4').classList.remove('active');
+                    document.getElementById('step-4').classList.add('completed');
+                    progressStatus.textContent = 'Analysis complete!';
+                    
+                    setTimeout(() => {
+                        document.getElementById('analysis-progress').style.display = 'none';
+                        showResults();
+                    }, 800);
+                }
+            }, 120);
+        }
+        
+        function showResults() {
+            const gradeOptions = [
+                { grade: 0, label: "No DR", description: "No visible signs of diabetic retinopathy", severity: 5, recommendation: "Annual screening recommended" },
+                { grade: 1, label: "Mild", description: "Mild nonproliferative diabetic retinopathy", severity: 25, recommendation: "Re-screen in 9-12 months" },
+                { grade: 2, label: "Moderate", description: "Moderate nonproliferative diabetic retinopathy", severity: 50, recommendation: "Re-screen in 6 months" },
+                { grade: 3, label: "Severe", description: "Severe nonproliferative diabetic retinopathy", severity: 75, recommendation: "Refer to ophthalmologist within 3 months" },
+                { grade: 4, label: "Proliferative", description: "Proliferative diabetic retinopathy", severity: 95, recommendation: "Immediate referral to ophthalmologist" }
+            ];
+            const resultIndex = Math.floor(Math.random() * gradeOptions.length);
+            const result = gradeOptions[resultIndex];
+
+            // ✅ MODIFIED CONFIDENCE SCORE TO BE BETWEEN 85 AND 95
+            const confidenceScore = Math.floor(Math.random() * (95 - 85 + 1) + 85);
+
+            document.getElementById('grade-badge').textContent = `Grade ${result.grade} - ${result.label}`;
+            document.getElementById('dr-description').textContent = result.description;
+            document.getElementById('severity-percentage').textContent = `${result.severity}%`;
+            document.getElementById('severity-fill').style.width = `${result.severity}%`;
+            document.getElementById('confidence-value').textContent = `${confidenceScore}%`;
+            document.getElementById('confidence-circle').style.background = 
+                `conic-gradient(#4169E1 0%, #4169E1 ${confidenceScore}%, #f0f0f0 ${confidenceScore}%)`;
+            document.getElementById('recommendation-text').textContent = result.recommendation;
+
+            document.getElementById('analysis-results').style.display = 'block';
+        }
+        function showError(message) {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('upload-area').style.display = 'block';
+        }
+        
+        // Heatmap toggle functionality
+        document.getElementById('heatmap-toggle').addEventListener('change', function() {
+            const resultImage = document.getElementById('result-image');
+            
+            if (this.checked) {
+                // In a real app, this would be a real heatmap image from your API
+                // For demo, we'll use a placeholder with a different color to simulate a heatmap
+                heatmapImageSrc = '/api/placeholder/400/320';
+                resultImage.src = heatmapImageSrc;
+                resultImage.style.filter = 'hue-rotate(220deg) saturate(1.5)';
+                resultImage.style.opacity = '0.9';
+            } else {
+                resultImage.src = originalImageSrc;
+                resultImage.style.filter = 'none';
+                resultImage.style.opacity = '1';
+            }
+        });
+        
+        // Analyze another image button
+        document.getElementById('analyze-another').addEventListener('click', function() {
+            document.getElementById('analysis-results').style.display = 'none';
+            document.getElementById('upload-area').style.display = 'block';
+            
+            // Reset steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            // Reset progress bar
+            document.getElementById('progress-bar').style.width = '0%';
+            
+            // Reset toggle
+            document.getElementById('heatmap-toggle').checked = false;
+            
+            // Clear the file input
+            document.getElementById('file-input').value = '';
+        });
+    </script>
+</body>
+</html>
